@@ -3,7 +3,6 @@ version: "3.2"
 services:
   mmvib-essim-adapter:
     build: .
-    image: ci.tno.nl/multimodelling/mmvib-essim-adapter:dev
     volumes:
       - .:/code
     command: ["gunicorn", "--reload", "tno.essim_adapter.main:app", "-t 300", "-w 1", "-b :9203"]
