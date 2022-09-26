@@ -1,0 +1,26 @@
+gunicorn
+
+Flask
+Flask-CORS
+flask-reverse-proxy-fix
+flask-smorest
+Flask-dotenv
+flask-executor
+marshmallow
+marshmallow_dataclass[enum]
+marshmallow_enum
+colorama
+structlog
+python-dotenv
+
+minio
+pyesdl
+requests
+influxdb
+
+# Development dependencies
+mypy
+pylint-flask
+pip-tools
+black
+flake8
