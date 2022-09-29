@@ -14,7 +14,7 @@ services:
       - mmvib-net
 
   essim:
-    image: ci.tno.nl/essim/open-sourced-essim/essim-engine:master
+    image: esdlmapeditoressim/essim:latest
     ports:
      - 8112:8112
     environment:
@@ -43,7 +43,7 @@ services:
      - mmvib-net
 
   nats:
-    image: ci.tno.nl/essim/modified-nats/nats-server:latest
+    image: esdlmapeditoressim/nats-server:latest
     ports:
      - 4222:4222
      - 8222:8222
@@ -84,7 +84,7 @@ services:
      - mmvib-net
 
   total-energy-production:
-    image: ci.tno.nl/essim/kpi-modules/kpi-modules/total-energy-production
+    image: esdlmapeditoressim/kpi-module-total-energy-production:latest
     depends_on:
      - mongo
      - nats
