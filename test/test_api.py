@@ -42,9 +42,9 @@ post_body = {
             ]
         },
     },
-    # "input_esdl_file_path": "bedrijventerreinommoord/Trial_20220708_1/Scenario_1_II3050_Nationale_Sturing/Experiment_1/MM_workflow_run_1/ESDL_add_price_profile_adapter/Hybrid HeatPump.esdl",
-    "input_esdl_file_path": "bedrijventerreinommoord/Trial_20220708_1/Scenario_1_II3050_Nationale_Sturing/Experiment_1/MM_workflow_run_1/ESDL_add_price_profile_adapter/HHP_profile.esdl",
-    "output_file_path": "bedrijventerreinommoord/Trial_20220708_1/Scenario_1_II3050_Nationale_Sturing/Experiment_1/MM_workflow_run_1/ESSIM_adapter/KPIs.json"
+    # "input_esdl_file_path": "bedrijventerreinommoord/Scenario_1_II3050_Nationale_Sturing/Trial_1/MM_workflow_run_1/ESDL_add_price_profile_adapter/Hybrid HeatPump.esdl",
+    "input_esdl_file_path": "bedrijventerreinommoord/Scenario_1_II3050_Nationale_Sturing/Trial_1/MM_workflow_run_1/ESDL_add_price_profile_adapter/HHP_profile.esdl",
+    "output_file_path": "bedrijventerreinommoord/Scenario_1_II3050_Nationale_Sturing/Trial_1/MM_workflow_run_1/ESSIM_adapter/KPIs.json"
 }
 
 res = requests.post(api_endpoint + '/model/initialize/' + model_run_id, json=post_body)

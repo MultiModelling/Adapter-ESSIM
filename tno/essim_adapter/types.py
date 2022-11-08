@@ -22,6 +22,7 @@ class ESSIMAdapterConfig:
     essim_post_body: Dict[str, Any]
     input_esdl_file_path: Optional[str] = None
     output_file_path: Optional[str] = None
+    base_path: Optional[str] = None
 
 
 @dataclass
