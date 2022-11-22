@@ -3,6 +3,12 @@ from io import BytesIO
 from typing import Dict
 from uuid import uuid4
 
+import json
+import sys
+
+import esdl
+import esdl.esdl_handler
+
 from minio import Minio
 
 from tno.essim_adapter.settings import EnvSettings
@@ -70,10 +76,73 @@ class Model(ABC):
     def process_results(self, result):
         pass
 
+    def post_process_results(self, model_run_id: str, result) -> esdl.esdl_handler.EnergySystemHandler:
+
+        path = str(self.model_run_dict[model_run_id].config.base_path) + str(
+            self.model_run_dict[model_run_id].config.input_esdl_file_path)
+
+        esh = esdl.esdl_handler.EnergySystemHandler()
+
+        bucket = path.split("/")[0]
+        rest_of_path = "/".join(path.split("/")[1:])
+
+        response = self.minio_client.get_object(bucket, rest_of_path)
+        es: esdl.EnergySystem = esh.load_from_string(response.data.decode('UTF-8'))
+
+        kpi_list = []
+
+        for essim_result in result:
+            kpi_id = essim_result["id"]
+            kpi_description = essim_result["descr"]
+
+            for kpi_result in essim_result["kpi"]:
+                for kpi_level in kpi_result:
+                    for kpi_selection in kpi_result[kpi_level]:
+                        kpi_name = kpi_selection["Name"]
+                        kpi_unit_enum = esdl.UnitEnum.getEEnumLiteral(
+                            name=kpi_selection["Unit"].upper()
+                        )
+                        kpi_unit = esdl.QuantityAndUnitType(unit=kpi_unit_enum)
+                        kpi_values = kpi_selection["Values"]
+
+                        if type(kpi_values) == list:
+                            for item in kpi_values:
+                                kpi_sub_unit = esdl.QuantityAndUnitType(
+                                    unit=kpi_unit_enum, description=item["carrier"]
+                                )
+                                kpi_list.append(
+                                    esdl.DoubleKPI(
+                                        name=kpi_name,
+                                        quantityAndUnit=kpi_sub_unit,
+                                        value=item["value"],
+                                    )
+                                )
+                        else:
+                            kpi_list.append(
+                                esdl.DoubleKPI(
+                                    name=kpi_name,
+                                    quantityAndUnit=kpi_unit,
+                                    value=kpi_values,
+                                )
+                            )
+
+        kpis = esdl.KPIs(id=kpi_id, description=kpi_description, kpi=kpi_list)
+        es.instance.items[0].area.KPIs = kpis
+
+        logger.debug("ESDL-KPI String: " + str(esh.to_string()))
+
+        return esh
+
     def store_result(self, model_run_id: str, result):
         if model_run_id in self.model_run_dict:
             res = self.process_results(result)
+
             if self.minio_client:
+
+                # Log output
+                logger.debug("KPI Output: " + str(result))
+
+                # Generate ESSIM KPIs
                 content = BytesIO(bytes(res, 'ascii'))
                 base_path = self.model_run_dict[model_run_id].config.base_path
                 path = base_path + self.model_run_dict[model_run_id].config.output_file_path
@@ -87,6 +156,23 @@ class Model(ABC):
                 self.model_run_dict[model_run_id].result = {
                     "path": path
                 }
+
+                # Process ESDL file
+                esh = self.post_process_results(model_run_id, result)
+
+                # now save it to MinIO
+                path = str(self.model_run_dict[model_run_id].config.base_path) + str(self.model_run_dict[model_run_id].config.output_esdl_file_path)
+                bucket = path.split("/")[0]
+                rest_of_path = "/".join(path.split("/")[1:])
+
+                content = BytesIO(bytes(esh.to_string(), 'ascii'))
+
+                if not self.minio_client.bucket_exists(bucket):
+                    self.minio_client.make_bucket(bucket)
+
+                self.minio_client.put_object(bucket, rest_of_path, content, content.getbuffer().nbytes)
+                logger.info("ESSIM data saved to MinIO")
+
             else:
                 self.model_run_dict[model_run_id].result = {
                     "result": res

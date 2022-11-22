@@ -178,6 +178,7 @@ class ESSIM(Model):
 
         logger.info("Start monitoring KPI progress...")
         kpi_path = f'{ESSIM_URL}/{simulation_id}/kpi'
+
         while True:
             r = requests.get(url=kpi_path, headers=ESSIM_HEADERS)
             response = r.json()
@@ -187,7 +188,7 @@ class ESSIM(Model):
                 kpis_info = ESSIM.process_kpi_results(response, kpi_list)
 
                 if kpis_info.still_calculating:
-                    logger.info(kpis_info.results)
+                    # logger.info(kpis_info.results)
                     sleep(PROGRESS_UPDATE_INTERVAL)
                 else:
                     logger.info('KPI modules finished')
@@ -266,20 +267,23 @@ class ESSIM(Model):
         return json.dumps(result)
 
     def results(self, model_run_id: str):
+
         # Issue: if status already runs executor.future.pop, future does not exist anymore
         if executor.futures.done(model_run_id):
+
             if model_run_id in self.model_run_dict:
                 future = executor.futures.pop(model_run_id)
                 model_run_info = future.result()
+
                 if model_run_info.result is not None:
                     print(model_run_info.result)
                 else:
                     logger.warning("No result in model_run_info variable")
 
                 self.model_run_dict[model_run_id].state = model_run_info.state
+
                 if model_run_info.state == ModelState.SUCCEEDED:
                     self.model_run_dict[model_run_id].result = model_run_info.result
-
                     Model.store_result(self, model_run_id=model_run_id, result=model_run_info.result)
                 else:
                     self.model_run_dict[model_run_id].result = {}
