@@ -9,6 +9,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 import requests
 
+from tno.essim_adapter.settings import EnvSettings
+
 api = Api()
 env = DotEnv()
 executor = Executor()
@@ -43,17 +45,18 @@ def create_app(object_name):
     api.register_blueprint(status_api)
     api.register_blueprint(model_api)
 
-    logger.info("Registering with MM Registry")
+    if EnvSettings.registry_endpoint():
+        logger.info("Registering with MM Registry")
 
-    # Register adapter to MM Registry
-    registry_data = {"uri": "http://mmvib-essim-adapter:9203", "used_workers": 0, "name": "ESSIM",
-                     "owner": "localhost", "version": "1.0", "max_workers": 1}
+        # Register adapter to MM Registry
+        registry_data = {"uri": "http://mmvib-essim-adapter:9203", "used_workers": 0, "name": "ESSIM",
+                         "owner": "localhost", "version": "1.0", "max_workers": 1}
 
-    try:
-        r = requests.post('http://mmvib-registry:9200/registry/', json=registry_data)
-        r.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        print(e.response.text)
+        try:
+            r = requests.post(EnvSettings.registry_endpoint(), json=registry_data)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(e.response.text)
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 

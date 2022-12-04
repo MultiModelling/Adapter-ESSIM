@@ -17,7 +17,7 @@ class EnvSettings:
 
     @staticmethod
     def flask_server_port() -> int:
-        return 9201
+        return os.getenv("FLASK_RUN_PORT", 9203)
 
     @staticmethod
     def is_production():
@@ -41,10 +41,12 @@ class EnvSettings:
         return os.getenv("MINIO_SECRET_KEY", "")
 
     @staticmethod
+    def registry_endpoint():
+        return os.getenv("REGISTRY_ENDPOINT", None)
+
+    @staticmethod
     def essim_url():
         return os.getenv("ESSIM_URL", "")
-
-
 
 
 class Config(object):
