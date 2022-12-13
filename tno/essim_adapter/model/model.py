@@ -108,11 +108,11 @@ class Model(ABC):
                         if type(kpi_values) == list:
                             for item in kpi_values:
                                 kpi_sub_unit = esdl.QuantityAndUnitType(
-                                    unit=kpi_unit_enum, description=item["carrier"]
+                                    unit=kpi_unit_enum
                                 )
                                 kpi_list.append(
                                     esdl.DoubleKPI(
-                                        name=kpi_name,
+                                        name=kpi_name + " - " + item["carrier"],
                                         quantityAndUnit=kpi_sub_unit,
                                         value=item["value"],
                                     )
