@@ -29,7 +29,7 @@ post_body = {
         "scenarioID": "essim_mmvib_adapter_test",
         "simulationDescription": "ESSIM MMvIB adapter test",
         "startDate": "2019-01-01T00:00:00+0100",
-        "endDate": "2019-01-01T23:00:00+0100",
+        "endDate": "2019-12-31T23:00:00+0100",
         "influxURL": "http://influxdb:8086",
         "grafanaURL": "http://grafana:3000",
         "natsURL": "nats://nats:4222",
@@ -38,13 +38,23 @@ post_body = {
                 {
                     "id": "TotalEnergyProductionID",
                     "config": {"scope": "Local"}
+                },
+                {
+                    "id": "TotalImportedEnergyID",
+                    "config": {"scope": "Local"}
+                },
+                {
+                    "id": "TotalExportedEnergyID",
+                    "config": {"scope": "Local"}
                 }
             ]
         },
     },
     "base_path": "bedrijventerreinommoord/Scenario_1_II3050_Nationale_Sturing/Trial_1/MM_workflow_run_1/",
     # "input_esdl_file_path": "ESDL_add_price_profile_adapter/Hybrid HeatPump.esdl",
-    "input_esdl_file_path": "ESDL_add_price_profile_adapter/HHP_profile.esdl",
+    # "input_esdl_file_path": "ESDL_add_price_profile_adapter/HHP_profile.esdl",
+    "input_esdl_file_path": "ESSIM_adapter/Tholen-simple v04-26kW.esdl",
+    "output_esdl_file_path": "ESSIM_adapter/Tholen-simple v04-26kW_output.esdl",
     "output_file_path": "ESSIM_adapter/KPIs.json"
 }
 

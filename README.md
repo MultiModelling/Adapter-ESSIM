@@ -5,8 +5,7 @@ The API is available at http://localhost:9203/openapi
 The project is based on TNO's Flask REST API template. For more information, see below.
 
 ## Container
-Use: `docker-compose build` to build the image
-Run the image using `docker-compose up -d`.
+Use: `docker-compose build` to build the image. Run the image using `docker-compose up -d`.
 
 
 ## Flask REST API Template

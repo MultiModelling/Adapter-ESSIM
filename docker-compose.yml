@@ -91,6 +91,22 @@ services:
     networks:
      - mmvib-net
 
+  total-imported-energy:
+    image: ci.tno.nl/essim/kpi-modules/kpi-modules/total-imported-energy:latest
+    depends_on:
+     - mongo
+     - nats
+    networks:
+     - mmvib-net
+
+  total-exported-energy:
+    image: ci.tno.nl/essim/kpi-modules/kpi-modules/total-exported-energy:latest
+    depends_on:
+     - mongo
+     - nats
+    networks:
+     - mmvib-net
+
 volumes:
   grafana-storage:
   influxdb-storage:

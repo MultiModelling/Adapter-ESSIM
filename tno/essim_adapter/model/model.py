@@ -91,6 +91,11 @@ class Model(ABC):
 
         kpi_list = []
 
+        # Quick 'hack' to ease mapping to ESDL types
+        kpi_unit_mapping = {
+            "PERCENTAGE": "PERCENT"
+        }
+
         for essim_result in result:
             kpi_id = essim_result["id"]
             kpi_description = essim_result["descr"]
@@ -99,30 +104,34 @@ class Model(ABC):
                 for kpi_level in kpi_result:
                     for kpi_selection in kpi_result[kpi_level]:
                         kpi_name = kpi_selection["Name"]
-                        kpi_unit_enum = esdl.UnitEnum.getEEnumLiteral(
-                            name=kpi_selection["Unit"].upper()
-                        )
-                        kpi_unit = esdl.QuantityAndUnitType(unit=kpi_unit_enum)
+                        kpi_unit = kpi_selection["Unit"].upper()
+                        if kpi_unit in kpi_unit_mapping:
+                            kpi_unit = kpi_unit_mapping[kpi_unit]
+                        kpi_unit_enum = esdl.UnitEnum.from_string(kpi_unit)
+                        kpi_unit = esdl.QuantityAndUnitType(id=str(uuid4()), unit=kpi_unit_enum)
                         kpi_values = kpi_selection["Values"]
 
                         if type(kpi_values) == list:
                             for item in kpi_values:
+                                kpi_sub_name = kpi_name + " - " + item["carrier"]
                                 kpi_sub_unit = esdl.QuantityAndUnitType(
                                     unit=kpi_unit_enum, description=item["carrier"]
                                 )
                                 kpi_list.append(
                                     esdl.DoubleKPI(
-                                        name=kpi_name,
+                                        id=str(uuid4()),
+                                        name=kpi_sub_name,
                                         quantityAndUnit=kpi_sub_unit,
-                                        value=item["value"],
+                                        value=float(item["value"]),
                                     )
                                 )
                         else:
                             kpi_list.append(
                                 esdl.DoubleKPI(
+                                    id=str(uuid4()),
                                     name=kpi_name,
                                     quantityAndUnit=kpi_unit,
-                                    value=kpi_values,
+                                    value=float(kpi_values),
                                 )
                             )
 
