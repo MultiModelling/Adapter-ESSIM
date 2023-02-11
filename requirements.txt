@@ -121,7 +121,7 @@ pycodestyle==2.8.0
     # via flake8
 pyecore==0.12.1
     # via pyesdl
-pyesdl==22.7.0
+pyesdl==22.11.2
     # via -r requirements.in
 pyflakes==2.4.0
     # via flake8
