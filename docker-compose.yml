@@ -92,7 +92,7 @@ services:
      - mmvib-net
 
   total-imported-energy:
-    image: ci.tno.nl/essim/kpi-modules/kpi-modules/total-imported-energy:latest
+    image: esdlmapeditoressim/kpi-module-total-imported-energy:latest
     depends_on:
      - mongo
      - nats
@@ -100,7 +100,7 @@ services:
      - mmvib-net
 
   total-exported-energy:
-    image: ci.tno.nl/essim/kpi-modules/kpi-modules/total-exported-energy:latest
+    image: esdlmapeditoressim/kpi-module-total-exported-energy:latest
     depends_on:
      - mongo
      - nats
