@@ -23,7 +23,8 @@ PROGRESS_UPDATE_INTERVAL = 1
 class ESSIM(Model):
 
     def start_essim(self, config: ESSIMAdapterConfig, model_run_id):
-        input_esdl_bytes = self.load_from_minio(config.base_path + config.input_esdl_file_path)
+        path = self.process_path(config.input_esdl_file_path, config.base_path)
+        input_esdl_bytes = self.load_from_minio(path)
         input_esdl_b64_bytes = base64.b64encode(input_esdl_bytes)
         input_esdl_b64_string = input_esdl_b64_bytes.decode('utf-8')
 

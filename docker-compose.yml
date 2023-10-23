@@ -1,4 +1,4 @@
-version: "3.2"
+version: "3.8"
 
 services:
   mmvib-essim-adapter:
@@ -16,7 +16,7 @@ services:
   essim:
     image: esdlmapeditoressim/essim:latest
     ports:
-     - 8112:8112
+     - "8112:8112"
     environment:
      - HTTP_SERVER_SCHEME=http
      - HTTP_SERVER_HOSTNAME=0.0.0.0
@@ -45,16 +45,16 @@ services:
   nats:
     image: esdlmapeditoressim/nats-server:latest
     ports:
-     - 4222:4222
-     - 8222:8222
-     - 6222:6222
+     - "4222:4222"
+     - "8222:8222"
+     - "6222:6222"
     networks:
      - mmvib-net
 
   mongo:
     image: mvertes/alpine-mongo
     ports:
-      - 0.0.0.0:27017:27017
+      - "0.0.0.0:27017:27017"
     volumes:
       - mongo-storage:/data/db
     networks:
@@ -63,8 +63,8 @@ services:
   influxdb:
     image: influxdb:1.7
     ports:
-      - 8086:8086
-      - 8998:8088
+      - "8086:8086"
+      - "8998:8088"
     volumes:
       - influxdb-storage:/var/lib/influxdb
     networks:
@@ -73,7 +73,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
       - GF_PANELS_DISABLE_SANITIZE_HTML=true
       - GF_SECURITY_ADMIN_USER=admin
@@ -114,4 +114,6 @@ volumes:
 
 networks:
   mmvib-net:
+    driver: bridge
     external: true
+    name: mmvib-net

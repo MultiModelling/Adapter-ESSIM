@@ -144,9 +144,16 @@ class Model(ABC):
 
         return None
 
+    @staticmethod
+    def process_path(path: str, base_path: str) -> str:
+        if path[0] == '.':
+            return base_path + path.lstrip('./')
+        else:
+            return path.lstrip('./')
+
     def load_profiles_from_influxdb(self, model_run_id: str):
-        path = str(self.model_run_dict[model_run_id].config.base_path) + str(
-            self.model_run_dict[model_run_id].config.input_esdl_file_path)
+        path = self.process_path(str(self.model_run_dict[model_run_id].config.input_esdl_file_path),
+                                 str(self.model_run_dict[model_run_id].config.base_path))
 
         esh = esdl.esdl_handler.EnergySystemHandler()
 
@@ -292,8 +299,9 @@ class Model(ABC):
 
     def post_process_results(self, model_run_id: str, result) -> esdl.esdl_handler.EnergySystemHandler:
 
-        path = str(self.model_run_dict[model_run_id].config.base_path) + str(
-            self.model_run_dict[model_run_id].config.input_esdl_file_path)
+        # path = str(self.model_run_dict[model_run_id].config.base_path) + str(
+        #     self.model_run_dict[model_run_id].config.input_esdl_file_path)
+        path = str(self.model_run_dict[model_run_id].config.input_esdl_file_path)
 
         esh = esdl.esdl_handler.EnergySystemHandler()
 
@@ -368,7 +376,7 @@ class Model(ABC):
                 # Generate ESSIM KPIs
                 content = BytesIO(bytes(res, 'ascii'))
                 base_path = self.model_run_dict[model_run_id].config.base_path
-                path = base_path + self.model_run_dict[model_run_id].config.output_file_path
+                path = self.process_path(self.model_run_dict[model_run_id].config.output_file_path, base_path)
                 bucket = path.split("/")[0]
                 rest_of_path = "/".join(path.split("/")[1:])
 
@@ -384,7 +392,7 @@ class Model(ABC):
                 esh = self.post_process_results(model_run_id, result)
 
                 # now save it to MinIO
-                path = str(self.model_run_dict[model_run_id].config.base_path) + str(self.model_run_dict[model_run_id].config.output_esdl_file_path)
+                path = self.process_path(str(self.model_run_dict[model_run_id].config.output_esdl_file_path), str(self.model_run_dict[model_run_id].config.base_path))
                 bucket = path.split("/")[0]
                 rest_of_path = "/".join(path.split("/")[1:])
 
